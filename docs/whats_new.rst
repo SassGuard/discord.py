@@ -11,6 +11,17 @@ Changelog
 This page keeps a detailed human friendly rendering of what's new and changed
 in specific versions.
 
+Unreleased
+----------
+
+New Features
+~~~~~~~~~~~~~
+
+- Add Discord content scan flags for attachments and embeds
+- Expose content scan metadata on unfurled media items
+- Add target user ID support when creating channel invites
+- Add methods for adding and removing individual or multiple invite target users
+
 .. _vp2p7p1:
 
 v2.7.1

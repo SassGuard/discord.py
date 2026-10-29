@@ -96,6 +96,7 @@ __all__ = (
     'MemberFlags',
     'AppCommandContext',
     'AttachmentFlags',
+    'ContentScanFlags',
     'RoleFlags',
     'AppInstallationType',
     'SKUFlags',
@@ -2253,6 +2254,11 @@ class AttachmentFlags(BaseFlags):
         """
         return 1 << 4
 
+    @alias_flag_value
+    def contains_explicit_content(self):
+        """:class:`bool`: Returns ``True`` if the attachment was flagged as explicit content."""
+        return 1 << 4
+
     @flag_value
     def animated(self):
         """:class:`bool`: Returns ``True`` if the attachment is an animated image.
@@ -2260,6 +2266,16 @@ class AttachmentFlags(BaseFlags):
         .. versionadded:: 2.5
         """
         return 1 << 5
+
+    @flag_value
+    def contains_gore_content(self):
+        """:class:`bool`: Returns ``True`` if the attachment was flagged as gore content."""
+        return 1 << 6
+
+    @flag_value
+    def contains_self_harm_content(self):
+        """:class:`bool`: Returns ``True`` if the attachment was flagged as self-harm content."""
+        return 1 << 7
 
 
 @fill_with_flags()
@@ -2454,12 +2470,47 @@ class EmbedFlags(BaseFlags):
         """:class:`bool`: Returns ``True`` if the embed was flagged as sensitive content."""
         return 1 << 4
 
+    @alias_flag_value
+    def contains_explicit_content(self):
+        """:class:`bool`: Returns ``True`` if the embed was flagged as explicit content."""
+        return 1 << 4
+
     @flag_value
     def content_inventory_entry(self):
         """:class:`bool`: Returns ``True`` if the embed is a reply to an activity card, and is no
         longer displayed.
         """
         return 1 << 5
+
+    @flag_value
+    def contains_gore_content(self):
+        """:class:`bool`: Returns ``True`` if the embed was flagged as gore content."""
+        return 1 << 6
+
+    @flag_value
+    def contains_self_harm_content(self):
+        """:class:`bool`: Returns ``True`` if the embed was flagged as self-harm content."""
+        return 1 << 7
+
+
+@fill_with_flags()
+class ContentScanFlags(BaseFlags):
+    """Wraps up the Discord content scan metadata flags."""
+
+    @flag_value
+    def explicit(self):
+        """:class:`bool`: Returns ``True`` if the media was flagged as explicit content."""
+        return 1 << 0
+
+    @flag_value
+    def gore(self):
+        """:class:`bool`: Returns ``True`` if the media was flagged as gore content."""
+        return 1 << 1
+
+    @flag_value
+    def self_harm(self):
+        """:class:`bool`: Returns ``True`` if the media was flagged as self-harm content."""
+        return 1 << 2
 
 
 @fill_with_flags()

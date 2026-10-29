@@ -1281,6 +1281,7 @@ class GuildChannel:
         unique: bool = True,
         target_type: Optional[InviteTarget] = None,
         target_user: Optional[User] = None,
+        target_user_ids: Optional[Sequence[Snowflake]] = None,
         target_application_id: Optional[int] = None,
         guest: bool = False,
     ) -> Invite:
@@ -1316,6 +1317,9 @@ class GuildChannel:
             The user whose stream to display for this invite, required if ``target_type`` is :attr:`.InviteTarget.stream`. The user must be streaming in the channel.
 
             .. versionadded:: 2.0
+
+        target_user_ids: Optional[Sequence[:class:`int`]]
+            The user IDs allowed to see and accept this invite.
 
         target_application_id:: Optional[:class:`int`]
             The id of the embedded application for the invite, required if ``target_type`` is :attr:`.InviteTarget.embedded_application`.
@@ -1356,6 +1360,7 @@ class GuildChannel:
             unique=unique,
             target_type=target_type.value if target_type else None,
             target_user_id=target_user.id if target_user else None,
+            target_user_ids=target_user_ids,
             target_application_id=target_application_id,
             flags=flags.value if flags else None,
         )

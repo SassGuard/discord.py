@@ -348,6 +348,12 @@ UnfurledMediaItem
 .. autoclass:: UnfurledMediaItem
     :members:
 
+ContentScanMetadata
+~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: ContentScanMetadata
+    :members:
+
 
 MediaGalleryItem
 ~~~~~~~~~~~~~~~~

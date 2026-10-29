@@ -1856,6 +1856,7 @@ class HTTPClient:
         unique: bool = True,
         target_type: Optional[invite.InviteTargetType] = None,
         target_user_id: Optional[Snowflake] = None,
+        target_user_ids: Optional[Sequence[Snowflake]] = None,
         target_application_id: Optional[Snowflake] = None,
         flags: Optional[int] = None,
     ) -> Response[invite.Invite]:
@@ -1872,6 +1873,9 @@ class HTTPClient:
 
         if target_user_id:
             payload['target_user_id'] = target_user_id
+
+        if target_user_ids is not None:
+            payload['target_user_ids'] = list(target_user_ids)
 
         if target_application_id:
             payload['target_application_id'] = str(target_application_id)
@@ -1905,6 +1909,22 @@ class HTTPClient:
 
     def delete_invite(self, invite_id: str, *, reason: Optional[str] = None) -> Response[invite.Invite]:
         return self.request(Route('DELETE', '/invites/{invite_id}', invite_id=invite_id), reason=reason)
+
+    def add_invite_target_user(self, invite_code: str, user_id: Snowflake) -> Response[None]:
+        route = Route('PUT', '/invites/{invite_code}/target-users/{user_id}', invite_code=invite_code, user_id=user_id)
+        return self.request(route)
+
+    def remove_invite_target_user(self, invite_code: str, user_id: Snowflake) -> Response[None]:
+        route = Route('DELETE', '/invites/{invite_code}/target-users/{user_id}', invite_code=invite_code, user_id=user_id)
+        return self.request(route)
+
+    def bulk_add_invite_target_users(self, invite_code: str, user_ids: Sequence[Snowflake]) -> Response[None]:
+        route = Route('POST', '/invites/{invite_code}/target-users/bulk-add', invite_code=invite_code)
+        return self.request(route, json={'user_ids': list(user_ids)})
+
+    def bulk_delete_invite_target_users(self, invite_code: str, user_ids: Sequence[Snowflake]) -> Response[None]:
+        route = Route('POST', '/invites/{invite_code}/target-users/bulk-delete', invite_code=invite_code)
+        return self.request(route, json={'user_ids': list(user_ids)})
 
     # Role management
 

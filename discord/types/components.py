@@ -150,6 +150,12 @@ class UnfurledMediaItem(TypedDict):
     loading_state: MediaItemLoadingState
     attachment_id: NotRequired[int]
     flags: NotRequired[int]
+    content_scan_metadata: NotRequired[ContentScanMetadata]
+
+
+class ContentScanMetadata(TypedDict, total=False):
+    flags: int
+    version: int
 
 
 class ThumbnailComponent(ComponentBase):

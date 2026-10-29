@@ -24,7 +24,7 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-from typing import List, Optional, Union, TYPE_CHECKING
+from typing import List, Optional, Sequence, Union, TYPE_CHECKING
 from .asset import Asset
 from .utils import parse_time, snowflake_time, _get_as_snowflake
 from .object import Object
@@ -534,6 +534,22 @@ class Invite(Hashable):
         .. versionadded:: 2.6
         """
         return InviteFlags._from_value(self._flags)
+
+    async def add_target_user(self, user_id: Snowflake) -> None:
+        """Adds a user who is allowed to see and accept this invite."""
+        await self._state.http.add_invite_target_user(self.code, user_id)
+
+    async def remove_target_user(self, user_id: Snowflake) -> None:
+        """Removes a user from this invite's target users."""
+        await self._state.http.remove_invite_target_user(self.code, user_id)
+
+    async def add_target_users(self, user_ids: Sequence[Snowflake]) -> None:
+        """Adds multiple users who are allowed to see and accept this invite."""
+        await self._state.http.bulk_add_invite_target_users(self.code, user_ids)
+
+    async def remove_target_users(self, user_ids: Sequence[Snowflake]) -> None:
+        """Removes multiple users from this invite's target users."""
+        await self._state.http.bulk_delete_invite_target_users(self.code, user_ids)
 
     def set_scheduled_event(self, scheduled_event: Snowflake, /) -> Self:
         """Sets the scheduled event for this invite.

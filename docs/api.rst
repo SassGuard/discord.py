@@ -6124,6 +6124,14 @@ AttachmentFlags
 .. autoclass:: AttachmentFlags
     :members:
 
+ContentScanFlags
+~~~~~~~~~~~~~~~~
+
+.. attributetable:: ContentScanFlags
+
+.. autoclass:: ContentScanFlags
+    :members:
+
 RoleFlags
 ~~~~~~~~~~
 

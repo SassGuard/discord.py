@@ -26,6 +26,7 @@ from __future__ import annotations
 
 from typing import (
     ClassVar,
+    Dict,
     List,
     Literal,
     Optional,
@@ -45,7 +46,7 @@ from .enums import (
     SeparatorSpacing,
     MediaItemLoadingState,
 )
-from .flags import AttachmentFlags
+from .flags import AttachmentFlags, ContentScanFlags
 from .colour import Colour
 from .file import File
 from .utils import get_slots, MISSING, _get_as_snowflake
@@ -111,6 +112,7 @@ __all__ = (
     'SectionComponent',
     'ThumbnailComponent',
     'UnfurledMediaItem',
+    'ContentScanMetadata',
     'MediaGalleryItem',
     'MediaGalleryComponent',
     'FileComponent',
@@ -1007,6 +1009,7 @@ class UnfurledMediaItem(AssetMixin):
         'width',
         'content_type',
         '_flags',
+        '_content_scan_metadata',
         'placeholder',
         'loading_state',
         'attachment_id',
@@ -1021,6 +1024,7 @@ class UnfurledMediaItem(AssetMixin):
         self.width: Optional[int] = None
         self.content_type: Optional[str] = None
         self._flags: int = 0
+        self._content_scan_metadata: Optional[ContentScanMetadata] = None
         self.placeholder: Optional[str] = None
         self.loading_state: Optional[MediaItemLoadingState] = None
         self.attachment_id: Optional[int] = None
@@ -1030,6 +1034,11 @@ class UnfurledMediaItem(AssetMixin):
     def flags(self) -> AttachmentFlags:
         """:class:`AttachmentFlags`: This media item's flags."""
         return AttachmentFlags._from_value(self._flags)
+
+    @property
+    def content_scan_metadata(self) -> Optional[ContentScanMetadata]:
+        """:class:`Optional[ContentScanMetadata]`: The content scan metadata for this media item, if scanned."""
+        return self._content_scan_metadata
 
     @classmethod
     def _from_data(cls, data: UnfurledMediaItemPayload, state: Optional[ConnectionState]):
@@ -1043,6 +1052,8 @@ class UnfurledMediaItem(AssetMixin):
         self.width = data.get('width')
         self.content_type = data.get('content_type')
         self._flags = data.get('flags', 0)
+        metadata = data.get('content_scan_metadata')
+        self._content_scan_metadata = ContentScanMetadata(metadata) if metadata is not None else None
         self.placeholder = data.get('placeholder')
 
         loading_state = data.get('loading_state')
@@ -1058,6 +1069,16 @@ class UnfurledMediaItem(AssetMixin):
         return {
             'url': self.url,
         }
+
+
+class ContentScanMetadata:
+    """Represents the content scan metadata attached to an unfurled media item."""
+
+    __slots__ = ('flags', 'version')
+
+    def __init__(self, data: Dict[str, int]) -> None:
+        self.flags: ContentScanFlags = ContentScanFlags._from_value(data.get('flags', 0))
+        self.version: Optional[int] = data.get('version')
 
 
 class MediaGalleryItem:
