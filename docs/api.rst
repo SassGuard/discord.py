@@ -2349,6 +2349,20 @@ of :class:`enum.Enum`.
         - :attr:`~AuditLogDiff.id`
         - :attr:`~AuditLogDiff.type`
 
+    .. attribute:: channel_position_update
+
+        someone dragged channels around to reorder them.
+
+        discord doesnt say which channels moved, so :attr:`~AuditLogEntry.target`
+        is always ``None``.
+
+        :attr:`~AuditLogEntry.extra` gets one thing on it:
+
+        - ``count``: how many channel moves got rolled into this entry.
+
+        if the same person keeps reordering fast, discord just bumps the count
+        on the same entry and doesnt send a new gateway event for it.
+
     .. attribute:: kick
 
         A member was kicked.
@@ -2524,6 +2538,14 @@ of :class:`enum.Enum`.
         - :attr:`~AuditLogDiff.hoist`
         - :attr:`~AuditLogDiff.name`
         - :attr:`~AuditLogDiff.permissions`
+
+    .. attribute:: role_position_update
+
+        someone dragged roles around to reorder them.
+
+        same deal as :attr:`channel_position_update`, :attr:`~AuditLogEntry.target`
+        is always ``None`` and :attr:`~AuditLogEntry.extra` just has ``count``,
+        how many role moves got rolled into this entry.
 
     .. attribute:: invite_create
 

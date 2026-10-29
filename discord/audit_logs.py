@@ -624,6 +624,10 @@ class _AuditLogProxyMessageBulkDelete(_AuditLogProxy):
     count: int
 
 
+class _AuditLogProxyPositionUpdate(_AuditLogProxy):
+    count: int
+
+
 class _AuditLogProxyAutoModAction(_AuditLogProxy):
     automod_rule_name: str
     automod_rule_trigger_type: str
@@ -719,6 +723,7 @@ class AuditLogEntry(Hashable):
             _AuditLogProxyPinAction,
             _AuditLogProxyStageInstanceAction,
             _AuditLogProxyMessageBulkDelete,
+            _AuditLogProxyPositionUpdate,
             _AuditLogProxyAutoModAction,
             _AuditLogProxyMemberKickOrMemberRoleUpdate,
             Member, User, None, PartialIntegration,
@@ -745,6 +750,8 @@ class AuditLogEntry(Hashable):
             elif self.action is enums.AuditLogAction.message_bulk_delete:
                 # The bulk message delete action has the number of messages deleted
                 self.extra = _AuditLogProxyMessageBulkDelete(count=int(extra['count']))
+            elif self.action in (enums.AuditLogAction.channel_position_update, enums.AuditLogAction.role_position_update):
+                self.extra = _AuditLogProxyPositionUpdate(count=int(extra['count']))
             elif self.action in (enums.AuditLogAction.kick, enums.AuditLogAction.member_role_update):
                 # The member kick action has a dict with some information
                 integration_type = extra.get('integration_type')
@@ -881,7 +888,10 @@ class AuditLogEntry(Hashable):
     def _convert_target_guild(self, target_id: int) -> Guild:
         return self.guild
 
-    def _convert_target_channel(self, target_id: int) -> Union[abc.GuildChannel, Object]:
+    def _convert_target_channel(self, target_id: Optional[int]) -> Optional[Union[abc.GuildChannel, Object]]:
+        if target_id is None:
+            return None
+
         return self.guild.get_channel(target_id) or Object(id=target_id)
 
     def _convert_target_user(self, target_id: Optional[int]) -> Optional[Union[Member, User, Object]]:
@@ -892,7 +902,10 @@ class AuditLogEntry(Hashable):
 
         return self._get_member(target_id) or Object(id=target_id, type=Member)
 
-    def _convert_target_role(self, target_id: int) -> Union[Role, Object]:
+    def _convert_target_role(self, target_id: Optional[int]) -> Optional[Union[Role, Object]]:
+        if target_id is None:
+            return None
+
         return self.guild.get_role(target_id) or Object(id=target_id, type=Role)
 
     def _convert_target_invite(self, target_id: None) -> Invite:

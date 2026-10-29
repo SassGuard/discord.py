@@ -21,6 +21,7 @@ New Features
 - Expose content scan metadata on unfurled media items
 - Add target user ID support when creating channel invites
 - Add methods for adding and removing individual or multiple invite target users
+- audit logs now know about channel and role reorders, ``AuditLogAction.channel_position_update`` and ``AuditLogAction.role_position_update``
 
 .. _vp2p7p1:
 

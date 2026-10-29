@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import discord
 import pytest
 
@@ -98,3 +100,30 @@ async def test_invite_target_user_routes(monkeypatch, method_name, http_method, 
     assert route.url.endswith(path)
     if payload is not None:
         assert kwargs['json'] == payload
+
+
+@pytest.mark.parametrize(
+    ('action_type', 'action'),
+    [
+        (16, discord.AuditLogAction.channel_position_update),
+        (33, discord.AuditLogAction.role_position_update),
+    ],
+)
+def test_position_update_audit_log_entry(action_type, action):
+    guild = SimpleNamespace(_state=None, get_channel=lambda _: None, get_role=lambda _: None, get_member=lambda _: None)
+    data = {
+        'id': '1565477659075674353',
+        'action_type': action_type,
+        'user_id': '1249812467861684239',
+        'target_id': None,
+        'options': {'count': '3'},
+    }
+
+    entry = discord.AuditLogEntry(
+        users={}, integrations={}, app_commands={}, automod_rules={}, webhooks={}, data=data, guild=guild
+    )
+
+    assert entry.action is action
+    assert entry.category is discord.AuditLogActionCategory.update
+    assert entry.target is None
+    assert entry.extra.count == 3
